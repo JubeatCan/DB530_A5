@@ -39,6 +39,10 @@ public:
 		return (opn->getType() == type) ? true : false;
 	}
 
+	void errorMessage(ExprTreePtr lhs, ExprTreePtr rhs, string opr) {
+		cerr << "This operator \'" << opr << "\' cannot be used between "
+			<< lhs->toString() << " and " << rhs->toString() << "." << endl;
+	}
 };
 
 class BoolLiteral : public ExprTree {
