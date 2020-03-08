@@ -3,6 +3,7 @@
 #define SQL_EXPRESSIONS
 
 #include "MyDB_AttType.h"
+#include "MyDB_Catalog.h"
 #include <string>
 #include <vector>
 
@@ -15,10 +16,14 @@ typedef shared_ptr <ExprTree> ExprTreePtr;
 
 // class ExprTree is a pure virtual class... the various classes that implement it are below
 class ExprTree {
+public:
+	static MyDB_CatalogPtr catalogPtr;
 
 public:
+
 	virtual string toString () = 0;
 	virtual ~ExprTree () {}
+
 };
 
 class BoolLiteral : public ExprTree {

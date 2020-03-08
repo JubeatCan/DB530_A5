@@ -17,7 +17,6 @@ using namespace std;
 /** HERE WE DEFINE ALL OF THE STRUCTS THAT ARE **/
 /** PASSED AROUND BY THE PARSER                **/
 /*************************************************/
-
 // structure that encapsulates a parsed computation that returns a value
 struct Value {
 
@@ -254,6 +253,10 @@ public:
 		}
 	}
 
+	void check() {
+
+	}
+
 	#include "FriendDecls.h"
 };
 
@@ -297,6 +300,12 @@ public:
 	
 	void printSFWQuery () {
 		myQuery.print ();
+	}
+
+	void checkSFWQuery(MyDB_CatalogPtr cPtr) {
+		ExprTree::catalogPtr = cPtr;
+		
+		myQuery.check();
 	}
 
 	#include "FriendDecls.h"
