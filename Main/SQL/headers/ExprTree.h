@@ -43,6 +43,11 @@ public:
 		cerr << "This operator \'" << opr << "\' cannot be used between "
 			<< lhs->toString() << " and " << rhs->toString() << "." << endl;
 	}
+
+	void errorMessage(ExprTreePtr opn, string opr) {
+		cerr << "This operator \'" << opr << "\' cannot be used on "
+			<< opn->toString() << "." << endl;
+	}
 };
 
 class BoolLiteral : public ExprTree {
