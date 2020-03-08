@@ -254,7 +254,13 @@ public:
 	}
 
 	void check() {
+		ExprTree::groups = groupingClauses;
+		// Tables (first is tableName, second is aliasName)
+		ExprTree::tables = tablesToProcess;
 
+		// First to check if table exists
+
+		// Second check 
 	}
 
 	#include "FriendDecls.h"
@@ -304,7 +310,6 @@ public:
 
 	void checkSFWQuery(MyDB_CatalogPtr cPtr) {
 		ExprTree::catalogPtr = cPtr;
-		
 		myQuery.check();
 	}
 

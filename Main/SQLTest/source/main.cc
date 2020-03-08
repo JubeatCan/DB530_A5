@@ -14,6 +14,8 @@
 using namespace std;
 
 MyDB_CatalogPtr ExprTree::catalogPtr = nullptr;
+vector<pair<string, string>> ExprTree::tables(0);
+vector<ExprTreePtr> ExprTree::groups(0);
 
 string toLower (string data) {
 	transform(data.begin(), data.end(), data.begin(), ::tolower);

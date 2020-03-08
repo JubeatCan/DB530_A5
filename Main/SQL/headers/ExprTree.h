@@ -18,11 +18,26 @@ typedef shared_ptr <ExprTree> ExprTreePtr;
 class ExprTree {
 public:
 	static MyDB_CatalogPtr catalogPtr;
+	static vector<pair<string, string>> tables;
+	static vector<ExprTreePtr> groups;
 
 public:
 
 	virtual string toString () = 0;
 	virtual ~ExprTree () {}
+	// For checking.
+	virtual bool check() = 0;
+	// To help with type check
+	// Lookup Table: "number" "boolean" "string" "(Unable to recognize this type)"
+	virtual string getType() = 0;
+
+	bool checkTypeEqual(ExprTreePtr lhs, ExprTreePtr rhs, string type) {
+		return (lhs->getType() == type && rhs->getType() == type) ? true : false;
+	}
+
+	bool checkTypeEqual(ExprTreePtr opn, string type) {
+		return (opn->getType() == type) ? true : false;
+	}
 
 };
 
@@ -43,6 +58,14 @@ public:
 			return "bool[false]";
 		}
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 };
 
 class DoubleLiteral : public ExprTree {
@@ -58,6 +81,14 @@ public:
 	string toString () {
 		return "double[" + to_string (myVal) + "]";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~DoubleLiteral () {}
 };
@@ -75,6 +106,14 @@ public:
 
 	string toString () {
 		return "int[" + to_string (myVal) + "]";
+	}
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
 	}
 
 	~IntLiteral () {}
@@ -95,6 +134,14 @@ public:
 		return "string[" + myVal + "]";
 	}
 
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
+
 	~StringLiteral () {}
 };
 
@@ -113,6 +160,14 @@ public:
 	string toString () {
 		return "[" + tableName + "_" + attName + "]";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~Identifier () {}
 };
@@ -135,6 +190,14 @@ public:
 		return "- (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
 
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
+
 	~MinusOp () {}
 };
 
@@ -155,6 +218,14 @@ public:
 	string toString () {
 		return "+ (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~PlusOp () {}
 };
@@ -177,6 +248,14 @@ public:
 		return "* (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
 
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
+
 	~TimesOp () {}
 };
 
@@ -197,6 +276,14 @@ public:
 	string toString () {
 		return "/ (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~DivideOp () {}
 };
@@ -219,6 +306,14 @@ public:
 		return "> (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
 
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
+
 	~GtOp () {}
 };
 
@@ -239,6 +334,14 @@ public:
 	string toString () {
 		return "< (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~LtOp () {}
 };
@@ -261,6 +364,14 @@ public:
 		return "!= (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
 
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
+
 	~NeqOp () {}
 };
 
@@ -281,6 +392,14 @@ public:
 	string toString () {
 		return "|| (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~OrOp () {}
 };
@@ -303,6 +422,14 @@ public:
 		return "== (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
 
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
+
 	~EqOp () {}
 };
 
@@ -321,6 +448,14 @@ public:
 	string toString () {
 		return "!(" + child->toString () + ")";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~NotOp () {}
 };
@@ -341,6 +476,14 @@ public:
 		return "sum(" + child->toString () + ")";
 	}	
 
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
+
 	~SumOp () {}
 };
 
@@ -359,6 +502,14 @@ public:
 	string toString () {
 		return "avg(" + child->toString () + ")";
 	}	
+
+	bool check() {
+		return true;
+	};
+
+	string getType() {
+		return "";
+	}
 
 	~AvgOp () {}
 };
