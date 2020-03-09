@@ -316,11 +316,23 @@ public:
 	}	
 
 	bool check() {
+		if (!lhs->check() || !rhs->check()) {
+			return false;
+		}
+
+		if (!checkTypeEqual(lhs, rhs, "number") && !checkTypeEqual(lhs, rhs, "string")) {
+			errorMessage(lhs, rhs, ">");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (checkTypeEqual(lhs, rhs, "number") || checkTypeEqual(lhs, rhs, "string")) {
+			return "boolean";
+		}
+		return "(Unable to recognize this type)";
 	}
 
 	~GtOp () {}
@@ -345,11 +357,23 @@ public:
 	}	
 
 	bool check() {
+		if (!lhs->check() || !rhs->check()) {
+			return false;
+		}
+
+		if (!checkTypeEqual(lhs, rhs, "number") && !checkTypeEqual(lhs, rhs, "string")) {
+			errorMessage(lhs, rhs, "<");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (checkTypeEqual(lhs, rhs, "number") || checkTypeEqual(lhs, rhs, "string")) {
+			return "boolean";
+		}
+		return "(Unable to recognize this type)";
 	}
 
 	~LtOp () {}
@@ -374,11 +398,23 @@ public:
 	}	
 
 	bool check() {
+		if (!lhs->check() || !rhs->check()) {
+			return false;
+		}
+		if (lhs->getType() != rhs->getType()) {
+			errorMessage(lhs, rhs, "!=");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (lhs->getType() == rhs->getType()) {
+			return "boolean";
+		}
+
+		return "(Unable to recognize this type)";
 	}
 
 	~NeqOp () {}
@@ -403,11 +439,23 @@ public:
 	}	
 
 	bool check() {
+		if (!lhs->check() || !rhs->check()) {
+			return false;
+		}
+
+		if (!checkTypeEqual(lhs, rhs, "boolean")) {
+			errorMessage(lhs, rhs, "||");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (checkTypeEqual(lhs, rhs, "boolean")) {
+			return "boolean";
+		}
+		return "(Unable to recognize this type)";
 	}
 
 	~OrOp () {}
@@ -432,11 +480,23 @@ public:
 	}	
 
 	bool check() {
+		if (!lhs->check() || !rhs->check()) {
+			return false;
+		}
+		if (lhs->getType() != rhs->getType()) {
+			errorMessage(lhs, rhs, "==");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (lhs->getType() == rhs->getType()) {
+			return "boolean";
+		}
+
+		return "(Unable to recognize this type)";
 	}
 
 	~EqOp () {}
@@ -459,11 +519,23 @@ public:
 	}	
 
 	bool check() {
+		if (!child->check()) {
+			return false;
+		}
+
+		if (!checkTypeEqual(child, "boolean")) {
+			errorMessage(child, "!");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (checkTypeEqual(child, "boolean")) {
+			return "boolean";
+		}
+		return "(Unable to recognize this type)";
 	}
 
 	~NotOp () {}
@@ -486,11 +558,22 @@ public:
 	}	
 
 	bool check() {
+		if (!child->check()) {
+			return false;
+		}
+		if (!checkTypeEqual(child, "number")) {
+			errorMessage(child, "SUM");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (checkTypeEqual(child, "number")) {
+			return "number";
+		}
+		return "(Unable to recognize this type)";
 	}
 
 	~SumOp () {}
@@ -513,11 +596,22 @@ public:
 	}	
 
 	bool check() {
+		if (!child->check()) {
+			return false;
+		}
+		if (!checkTypeEqual(child, "number")) {
+			errorMessage(child, "SUM");
+			return false;
+		}
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+		if (checkTypeEqual(child, "number")) {
+			return "number";
+		}
+		return "(Unable to recognize this type)";
 	}
 
 	~AvgOp () {}
