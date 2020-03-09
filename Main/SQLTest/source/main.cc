@@ -167,9 +167,14 @@ int main (int numArgs, char **args) {
 					} else if (final->isSFWQuery ()) {
 
 						// print it out
+						printf("----------Print Query----------------\n");
 						final->printSFWQuery ();
 						printf("----------Check Semantics------------\n");
-						final->checkSFWQuery(myCatalog);
+						if (final->checkSFWQuery(myCatalog)) {
+							cout << "Semantic check passed." << endl;
+						} else {
+							cerr << "Semantic check error." << endl;
+						}
 						printf("----------Results Above--------------\n");
 					}
 
