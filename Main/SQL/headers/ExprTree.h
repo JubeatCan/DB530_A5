@@ -6,6 +6,7 @@
 #include "MyDB_Catalog.h"
 #include <string>
 #include <vector>
+#include <set>
 
 // create a smart pointer for database tables
 using namespace std;
@@ -73,7 +74,7 @@ public:
 	};
 
 	string getType() {
-		return "";
+		return "boolean";
 	}
 };
 
@@ -96,7 +97,7 @@ public:
 	};
 
 	string getType() {
-		return "";
+		return "number";
 	}
 
 	~DoubleLiteral () {}
@@ -122,7 +123,7 @@ public:
 	};
 
 	string getType() {
-		return "";
+		return "number";
 	}
 
 	~IntLiteral () {}
@@ -148,7 +149,7 @@ public:
 	};
 
 	string getType() {
-		return "";
+		return "string";
 	}
 
 	~StringLiteral () {}
@@ -159,6 +160,7 @@ class Identifier : public ExprTree {
 private:
 	string tableName;
 	string attName;
+	string attType;
 public:
 
 	Identifier (char *tableNameIn, char *attNameIn) {
@@ -171,11 +173,44 @@ public:
 	}	
 
 	bool check() {
+	    // check table name
+	    bool tableExist = false;
+	    string tableFullName;
+	    for (auto table : tables) {
+	        if (tableName == table.second) {
+                tableFullName = table.first;
+                tableExist = true;
+	        }
+	    }
+
+	    if (!tableExist) {
+	        cout << "The table [" << tableName << "] doesn't exist, please check" << endl;
+	        return false;
+	    }
+
+	    // check attribute
+	    bool attExist = false;
+	    vector<string> attributes;
+	    catalogPtr->getStringList(tableFullName + ".attList", attributes);
+	    set<string> attSet(attributes.begin(), attributes.end());
+	    if (attSet.find(attName) != attSet.end()) {
+	        attExist = true;
+	    }
+
+	    if (!attExist) {
+            cout << "The attribute [" << attName << "] doesn't exist, please check" << endl;
+            return false;
+	    }
+
+	    // get attribute type
+        catalogPtr->getString(tableFullName + "." + attName + ".type", attType);
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+	    // ?
+		return attType;
 	}
 
 	~Identifier () {}
@@ -200,11 +235,22 @@ public:
 	}	
 
 	bool check() {
+	    if (!lhs->check() || !rhs->check()) {
+	        return false;
+	    }
+
+	    if (!checkTypeEqual(lhs, rhs, "number")) {
+	        errorMessage(lhs, rhs, "-");
+	        return false;
+	    }
 		return true;
 	};
 
 	string getType() {
-		return "";
+	    if (checkTypeEqual(lhs, rhs, "number")) {
+	        return "number";
+	    }
+		return "(Unable to recognize this type)";
 	}
 
 	~MinusOp () {}
@@ -229,11 +275,26 @@ public:
 	}	
 
 	bool check() {
+        if (!lhs->check() || !rhs->check()) {
+            return false;
+        }
+
+        if (!checkTypeEqual(lhs, rhs, "number") && !checkTypeEqual(lhs, rhs, "string")) {
+            errorMessage(lhs, rhs, "+");
+            return false;
+        }
+
 		return true;
 	};
 
 	string getType() {
-		return "";
+        if (checkTypeEqual(lhs, rhs, "number")) {
+            return "number";
+        }
+        if (checkTypeEqual(lhs, rhs, "string")) {
+            return "string";
+        }
+        return "(Unable to recognize this type)";
 	}
 
 	~PlusOp () {}
@@ -258,11 +319,23 @@ public:
 	}	
 
 	bool check() {
-		return true;
+        if (!lhs->check() || !rhs->check()) {
+            return false;
+        }
+
+        if (!checkTypeEqual(lhs, rhs, "number")) {
+            errorMessage(lhs, rhs, "*");
+            return false;
+        }
+
+        return true;
 	};
 
 	string getType() {
-		return "";
+        if (checkTypeEqual(lhs, rhs, "number")) {
+            return "number";
+        }
+        return "(Unable to recognize this type)";
 	}
 
 	~TimesOp () {}
@@ -287,11 +360,23 @@ public:
 	}	
 
 	bool check() {
-		return true;
+        if (!lhs->check() || !rhs->check()) {
+            return false;
+        }
+
+        if (!checkTypeEqual(lhs, rhs, "number")) {
+            errorMessage(lhs, rhs, "/");
+            return false;
+        }
+
+        return true;
 	};
 
 	string getType() {
-		return "";
+        if (checkTypeEqual(lhs, rhs, "number")) {
+            return "number";
+        }
+        return "(Unable to recognize this type)";
 	}
 
 	~DivideOp () {}
