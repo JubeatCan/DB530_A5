@@ -160,7 +160,7 @@ class Identifier : public ExprTree {
 private:
 	string tableName;
 	string attName;
-	string attType;
+	string attType = "";
 public:
 
 	Identifier (char *tableNameIn, char *attNameIn) {
@@ -210,7 +210,17 @@ public:
 
 	string getType() {
 	    // ?
-		return attType;
+		if (attType == "") {
+			check();
+		}
+		if (attType == "bool")
+			return "boolean";
+		if (attType == "int" || attType == "double")
+			return "number";
+		if (attType == "string")
+			return "string";
+		return "(Unable to recognize this type)";
+		
 	}
 
 	~Identifier () {}
