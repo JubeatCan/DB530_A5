@@ -1,0 +1,314 @@
+(1)
+----------Print Query----------------
+Selecting the following:
+	[n_n_name]
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	region AS r
+	nation AS n
+	supplier AS s
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	== ([l_l_orderkey], [o_o_orderkey])
+	== ([l_l_suppkey], [s_s_suppkey])
+	== ([c_c_nationkey], [s_s_nationkey])
+	== ([s_s_nationkey], [n_n_nationkey])
+	== ([n_n_regionkey], [r_r_regionkey])
+	== ([r_r_name], string[region])
+	|| (> ([o_o_orderdate], string[date1]), == ([o_o_orderdate], string[date1]))
+	!(< ([o_o_orderdate], string[date2]))
+Group using:
+	[n_n_name]
+----------Check Semantics------------
+Semantic check passed.
+----------Results Above--------------
+
+(2)
+----------Print Query----------------
+Selecting the following:
+	[n_n_name]
+	[s_s_suppkey]
+	sum([l_l_extendedprice])
+From the following:
+	lineitem AS l
+	supplier AS s
+	nation AS n
+Where the following are true:
+	== ([l_l_suppkey], [s_s_suppkey])
+	== ([s_s_nationkey], [n_n_nationkey])
+Group using:
+	[n_n_name]
+----------Check Semantics------------
+Cannot match select [s_s_suppkey] with grouping.
+Semantic check error.
+----------Results Above--------------
+
+(3)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+Where the following are true:
+	> (* ([l_l_extendedprice], - (int[1], [l_l_discount])), string[a string])
+Group using:
+----------Check Semantics------------
+This operator '>' cannot be used between * ([l_l_extendedprice], - (int[1], [l_l_discount])) and string[a string].
+Something about disjunctions triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(4)
+----------Print Query----------------
+Selecting the following:
+	sum(+ ([l_l_returnflag], + ([l_l_shipdate], [l_l_commitdate])))
+From the following:
+	lineitem AS l
+Where the following are true:
+	bool[true]
+Group using:
+----------Check Semantics------------
+This operator 'SUM' cannot be used on + ([l_l_returnflag], + ([l_l_shipdate], [l_l_commitdate])).
+Something about select triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(5)
+----------Print Query----------------
+Selecting the following:
+	+ ([l_l_returnflag], + ([l_l_shipdate], [l_l_commitdate]))
+From the following:
+	lineitem AS l
+Where the following are true:
+	> ([l_l_shipdate], string[a date])
+Group using:
+----------Check Semantics------------
+Semantic check passed.
+----------Results Above--------------
+
+(6)
+----------Print Query----------------
+Selecting the following:
+	[n_n_name]
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	region AS r
+	nation AS n
+	supplier AS s
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	== ([l_l_orderkey], [o_o_orderkey])
+	== ([l_l_suppkey], [s_s_suppkey])
+	== ([c_c_nationkey], [s_s_nationkey])
+	== ([s_s_nationkey], [n_n_nationkey])
+	== ([n_n_regionkey], [r_r_regionkey])
+	== ([r_r_name], string[region])
+	|| (> (+ ([l_l_tax], [l_l_discount]), string[date2]), == ([o_o_orderdate], string[date1]))
+	!(< ([o_o_orderdate], string[date2]))
+Group using:
+	[n_n_name]
+----------Check Semantics------------
+This operator '>' cannot be used between + ([l_l_tax], [l_l_discount]) and string[date2].
+Something about disjunctions triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(7)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	== ([l_l_orderkey], [o_k_orderkey])
+Group using:
+----------Check Semantics------------
+The attribute [k_orderkey] doesn't exist, please check
+Something about disjunctions triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(8)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [h_o_custkey])
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+The table [h] doesn't exist, please check
+Something about disjunctions triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(9)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	> (+ (string[this is a string], string[this is another string]), - (double[15.000000], string[here is another]))
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+This operator '-' cannot be used between double[15.000000] and string[here is another].
+Something about disjunctions triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(10)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customers AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+Cannot find table: customers
+Semantic check error.
+----------Results Above--------------
+
+(11)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	== ([l_l_orderkey], [o_o_orderkey])
+	== (+ (int[1200], / ([l_l_quantity], + (double[300.000000], int[34]))), int[33])
+Group using:
+----------Check Semantics------------
+Semantic check passed.
+----------Results Above--------------
+
+(12)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	> (+ (string[this is a string], string[this is another string]), string[here is another])
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+Semantic check passed.
+----------Results Above--------------
+
+(13)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+	sum(* ([c_l_extendedprice], double[1.010000]))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+The attribute [l_extendedprice] doesn't exist, please check
+Something about select triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(14)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	== (+ (string[1204], string[this is a string]), [l_l_returnflag])
+	> (+ ([l_l_tax], + ([l_l_discount], [l_l_extendedprice])), double[3.270000])
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+Semantic check passed.
+----------Results Above--------------
+
+(15)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	|| (> (+ ([l_l_tax], + ([l_l_discount], [l_l_extendedprice])), double[3.270000]), > (+ ([l_l_discount], [l_l_extendedprice]), string[327]))
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+This operator '>' cannot be used between + ([l_l_discount], [l_l_extendedprice]) and string[327].
+Something about disjunctions triggers errors.
+Semantic check error.
+----------Results Above--------------
+
+(16)
+----------Print Query----------------
+Selecting the following:
+	sum(* ([l_l_extendedprice], - (int[1], [l_l_discount])))
+	sum(- (int[1], [l_l_discount]))
+From the following:
+	lineitem AS l
+	orders AS o
+	customer AS c
+Where the following are true:
+	== ([c_c_custkey], [o_o_custkey])
+	|| (> (+ ([l_l_tax], + ([l_l_discount], [l_l_extendedprice])), double[3.270000]), > (string[here is a string], string[327]))
+	== ([l_l_orderkey], [o_o_orderkey])
+Group using:
+----------Check Semantics------------
+Semantic check passed.
+----------Results Above--------------
+
+(17)
+----------Print Query----------------
+Selecting the following:
+	sum(+ (int[12], + (double[13.400000], int[19])))
+	sum([l_l_extendedprice])
+From the following:
+	lineitem AS l
+Where the following are true:
+	bool[true]
+Group using:
+----------Check Semantics------------
+Semantic check passed.
+----------Results Above--------------

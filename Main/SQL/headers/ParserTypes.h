@@ -294,7 +294,7 @@ public:
 				}
 			}
 			for (auto v : valuesToSelect) {
-				if (v->toString().substr(0,3) == "SUM" || v->toString().substr(0,3) == "AVG") {
+				if (v->toString().substr(0,3) == "sum" || v->toString().substr(0,3) == "avg") {
 					continue;
 				}
 				if (s_group.find(v->toString()) == s_group.end()) {
