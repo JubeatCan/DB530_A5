@@ -10,6 +10,7 @@
 #include "MyDB_Table.h"
 #include <string>
 #include <utility>
+#include <unordered_set>
 
 using namespace std;
 
@@ -253,14 +254,65 @@ public:
 		}
 	}
 
-	void check() {
+	bool check() {
 		ExprTree::groups = groupingClauses;
 		// Tables (first is tableName, second is aliasName)
 		ExprTree::tables = tablesToProcess;
 
+		vector<string> tables;
+		ExprTree::catalogPtr->getStringList("tables", tables);
+		unordered_set<string> s_tables(tables.begin(), tables.end());
 		// First to check if table exists
+		for (auto t : tablesToProcess) {
+			if (s_tables.find(t.first) == s_tables.end()) {
+				cerr << "Cannot find table: " << t.first << endl;
+				return false;
+			}
+		}
 
-		// Second check 
+		// Second check group and select
+		if (groupingClauses.empty()) {
+			for (auto v : valuesToSelect) {
+				if (!v->check()) {
+					cerr << "Something about select triggers errors." << endl;
+					return false;
+				}
+			}
+		} else {
+			unordered_set<string> s_group;
+			for (auto g : groupingClauses) {
+				if (!g->check()) {
+					cerr << "Something about grouping triggers errors." << endl;
+					return false;
+				}
+				s_group.insert(g->toString());
+			}
+			for (auto v : valuesToSelect) {
+				if (!v->check()) {
+					cerr << "Something about select triggers errors." << endl;
+					return false;
+				}
+			}
+			for (auto v : valuesToSelect) {
+				if (v->toString().substr(0,3) == "SUM" || v->toString().substr(0,3) == "AVG") {
+					continue;
+				}
+				if (s_group.find(v->toString()) == s_group.end()) {
+					cerr << "Cannot match select " << v->toString() << " with grouping." << endl;
+					return false;
+				}
+			}
+		}
+
+		// Third check disjoint
+		for (auto d : allDisjunctions) {
+			if (!d->check()) {
+				cerr << "Something about disjunctions triggers errors." << endl;
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	#include "FriendDecls.h"
@@ -308,9 +360,9 @@ public:
 		myQuery.print ();
 	}
 
-	void checkSFWQuery(MyDB_CatalogPtr cPtr) {
+	bool checkSFWQuery(MyDB_CatalogPtr cPtr) {
 		ExprTree::catalogPtr = cPtr;
-		myQuery.check();
+		return myQuery.check();
 	}
 
 	#include "FriendDecls.h"
